@@ -1,4 +1,4 @@
-import discOMEGALULrd
+import discord
 from discord.ext import commands
 
 client = commands.Bot(command_prefix = '.')
@@ -13,4 +13,5 @@ async def on_ready():
 with open("config.ini", "r+") as file:
     client.run(file.readline())
 
-# No changes :)
+# This is a change :)
+# No :)
