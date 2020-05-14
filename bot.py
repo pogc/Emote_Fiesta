@@ -9,5 +9,4 @@ async def on_ready():
     print('Bot is ready')
 
 with open("config.ini", "r+") as file:
-    client.run(file.readline())
-
+    client.run(kokc.readline())
