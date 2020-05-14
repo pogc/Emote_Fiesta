@@ -13,5 +13,4 @@ async def on_ready():
 with open("config.ini", "r+") as file:
     client.run(file.readline())
 
-
->>>>>>> Stashed changes
+# This is a change :)
