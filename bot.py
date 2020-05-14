@@ -7,6 +7,11 @@ client = commands.Bot(command_prefix = '.')
 @client.event
 async def on_ready():
     print('Bot is ready')
+    print('Smile')
+
 
 with open("config.ini", "r+") as file:
-    client.run(kokc.readline())
+    client.run(file.readline())
+
+
+>>>>>>> Stashed changes
