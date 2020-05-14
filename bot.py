@@ -14,3 +14,4 @@ with open("config.ini", "r+") as file:
     client.run(file.readline())
 
 # This is a change :)
+# No :)
