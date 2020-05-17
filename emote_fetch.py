@@ -27,7 +27,7 @@ class Web_Page:
         page = requests.get(self._url)
         return BeautifulSoup(page.content, features="html.parser")
 
-    def emote_fetch(self):
+    def _emote_fetch(self):
         """Processes the obtained soup and extracts the relevant information.
            Depending on availability, the emote images will be 4x their size.
 
@@ -35,8 +35,8 @@ class Web_Page:
             A tuple with 2 lists containing the emote names and image urls
             respectively.
         """
-        name = []
-        img_url = []
+        names = []
+        img_urls = []
         soup = self._html_fetch()
 
         for a in soup.find_all('td', attrs={'class': 'emoticon light'}):
@@ -48,21 +48,21 @@ class Web_Page:
             except AttributeError:
                 img_url.append(re.search("srcset=\"(.*) 1x", _a).group(1))
 
-        return name, img_url
+        return names, img_urls
 
     def emote_dict(self):
         """Returns dictionary respective to emote_list"""
         keys, values = self.emote_fetch()
         return dict(zip(keys, values))
 
-    def sql_store(self, names, urls):
+    def _sql_store(self, names, urls):
         """Stores the list of emotes in SQLite database."""
         conn = None
         if not (os.path.isfile(db_filename)):
             conn = sqlite3.connect("database.sqlite")
             conn.execute('''CREATE TABLE emotes(
-                        ID PRIMARY KEY NOT NULL, 
-                        name TEXT NOT NULL, 
+                        ID PRIMARY KEY NOT NULL,
+                        name TEXT NOT NULL,
                         url TEXT NOT NULL)''')
             conn.close()
         try:
@@ -74,10 +74,17 @@ class Web_Page:
             if conn:
                 conn.close()
 
+    def emote_db(self)
+
+
 
 def test_function(url="https://www.frankerfacez.com/emoticons/?q=&sort=count-desc"):
     page_1 = Web_Page(url)
     return page_1.emote_dict()
+
+
+def create_db(db_name="database.sqlite"):
+    url_base = "https://www.frankerfacez.com/emoticons/?q=&sort=count-desc&page=")
 
 
 if __name__ == '__main__':
