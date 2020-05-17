@@ -27,7 +27,7 @@ class Web_Page:
         page = requests.get(self._url)
         return BeautifulSoup(page.content, features="html.parser")
 
-    def emote_list(self):
+    def emote_fetch(self):
         """Processes the obtained soup and extracts the relevant information.
            Depending on availability, the emote images will be 4x their size.
 
@@ -52,10 +52,11 @@ class Web_Page:
 
     def emote_dict(self):
         """Returns dictionary respective to emote_list"""
-        keys, values = self.emote_list()
+        keys, values = self.emote_fetch()
         return dict(zip(keys, values))
 
     def sql_store(self, names, urls):
+        """Stores the list of emotes in SQLite database."""
         conn = None
         if not (os.path.isfile(db_filename)):
             conn = sqlite3.connect("database.sqlite")
