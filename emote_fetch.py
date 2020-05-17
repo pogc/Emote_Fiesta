@@ -55,7 +55,8 @@ class Web_Page:
         keys, values = self.emote_fetch()
         return dict(zip(keys, values))
 
-    def _sql_store(self, names, urls):
+    @staticmethod
+    def _sql_store(names, urls):
         """Stores the list of emotes in SQLite database."""
         conn = None
         if not (os.path.isfile(db_filename)):
