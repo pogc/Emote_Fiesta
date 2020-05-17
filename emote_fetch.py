@@ -62,8 +62,8 @@ class Web_Page:
         if not (os.path.isfile(db_filename)):
             conn = sqlite3.connect("database.sqlite")
             conn.execute('''CREATE TABLE emotes(
-                        ID PRIMARY KEY UNIQUE NOT NULL,
-                        name TEXT NOT NULL,
+                        ID PRIMARY KEY NOT NULL,
+                        name TEXT UNIQUE NOT NULL,
                         url TEXT NOT NULL)''')
             conn.close()
         try:
