@@ -42,11 +42,11 @@ class Web_Page:
         for a in soup.find_all('td', attrs={'class': 'emoticon light'}):
             _a = a.prettify()
             _a = re.sub("\n", "", _a)
-            name.append(re.search("title=\"(.*)\"/>", _a).group(1))
+            names.append(re.search("title=\"(.*)\"/>", _a).group(1))
             try:
-                img_url.append(re.search("2x, (.*) 4x", _a).group(1))
+                img_urls.append(re.search("2x, (.*) 4x", _a).group(1))
             except AttributeError:
-                img_url.append(re.search("srcset=\"(.*) 1x", _a).group(1))
+                img_urls.append(re.search("srcset=\"(.*) 1x", _a).group(1))
 
         return names, img_urls
 
