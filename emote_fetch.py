@@ -65,9 +65,8 @@ class Web_Page:
                         url TEXT NOT NULL)''')
             conn.close()
         try:
-            conn = sqlite3.connect(db_filename)
-            for name, url in (Web_Page.(url_iter).emote_list():
-
+            conn = sqlite3.connect("database.sqlite")
+            conn.execute('''INSERT INTO emotes(name, url) VALUES (?, ?)''', (names, urls))
         except Error as e:
             print(e)
         finally:
