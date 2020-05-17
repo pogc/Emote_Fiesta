@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
 import sys
-
-sys.path.insert(1, '../.')
+# sys.path.insert(1, '../.')
 from emote_fetch import test_function
+
 
 class Test(commands.Cog):
 

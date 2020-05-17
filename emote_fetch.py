@@ -1,10 +1,15 @@
 """Module containing the tools to extract online emote data"""
+import os.path
 
 import requests
 import re
 import sys
 from bs4 import BeautifulSoup
 from pprint import pprint as pp
+import sqlite3
+from sqlite3 import Error
+
+db_filename = "database.sqlite"
 
 
 class Web_Page:
@@ -49,6 +54,23 @@ class Web_Page:
         """Returns dictionary respective to emote_list"""
         keys, values = self.emote_list()
         return dict(zip(keys, values))
+
+    def sql_store(self):
+        conn = None
+        if not (os.path.isfile(db_filename)):
+            conn = sqlite3.connect("database.sqlite")
+            conn.execute('''CREATE TABLE emotes(
+                        ID PRIMARY KEY NOT NULL, 
+                        name TEXT NOT NULL, 
+                        url TEXT NOT NULL)''')
+            conn.close()
+        try:
+            conn = sqlite3.connect(db_filename)
+        except Error as e:
+            print(e)
+        finally:
+            if conn:
+                conn.close()
 
 
 def test_function(url="https://www.frankerfacez.com/emoticons/?q=&sort=count-desc"):
