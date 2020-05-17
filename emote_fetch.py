@@ -55,7 +55,7 @@ class Web_Page:
         keys, values = self.emote_list()
         return dict(zip(keys, values))
 
-    def sql_store(self):
+    def sql_store(self, names, urls):
         conn = None
         if not (os.path.isfile(db_filename)):
             conn = sqlite3.connect("database.sqlite")
@@ -66,6 +66,8 @@ class Web_Page:
             conn.close()
         try:
             conn = sqlite3.connect(db_filename)
+            for name, url in (Web_Page.(url_iter).emote_list():
+
         except Error as e:
             print(e)
         finally:
