@@ -61,11 +61,16 @@ class Web_Page:
                 names: List of strings with names corresponding to the images
                 urls: List of strings with urls corresponding to the images
         """
+
+    @staticmethod
+    def _sql_store(names, urls):
+        """Stores the list of emotes in SQLite database."""
         conn = None
         if not (os.path.isfile(self._db_filename)):
             conn = sqlite3.connect("database.sqlite")
             conn.execute('''CREATE TABLE emotes(
-                        name TEXT NOT NULL,
+                        ID PRIMARY KEY NOT NULL,
+                        name TEXT UNIQUE NOT NULL,
                         url TEXT NOT NULL)''')
             conn.close()
         try:
