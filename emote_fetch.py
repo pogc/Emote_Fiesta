@@ -10,7 +10,7 @@ import sqlite3
 from sqlite3 import Error
 
 
-class Web_Page:
+class WebPage:
     """Respective to the emoticon library pages"""
 
     def __init__(self, url, db_filename="database.sqlite"):
@@ -51,9 +51,10 @@ class Web_Page:
 
     def emote_dict(self):
         """Returns dictionary respective to _emote_fetch"""
-        keys, values = self.emote_fetch()
+        keys, values = self._emote_fetch()
         return dict(zip(keys, values))
 
+    @staticmethod
     def _sql_store(self, names, urls):
         """Stores the list of emotes in SQLite database.
 
@@ -61,17 +62,13 @@ class Web_Page:
                 names: List of strings with names corresponding to the images
                 urls: List of strings with urls corresponding to the images
         """
-
-    @staticmethod
-    def _sql_store(names, urls):
-        """Stores the list of emotes in SQLite database."""
         conn = None
         if not (os.path.isfile(self._db_filename)):
             conn = sqlite3.connect("database.sqlite")
             conn.execute('''CREATE TABLE emotes(
-                        ID PRIMARY KEY NOT NULL,
+                        ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         name TEXT UNIQUE NOT NULL,
-                        url TEXT NOT NULL)''')
+                        url TEXT NOT NULL);''')
             conn.close()
         try:
             conn = sqlite3.connect("database.sqlite")
@@ -79,28 +76,30 @@ class Web_Page:
             print(e)
         for n, u in zip(names, urls):
             try:
-                conn.execute('''INSERT INTO emotes (name, url) VALUES (?, ?)''', (n, u))
-            except sqlite3.IntegrityError as e:
+                conn.execute('''INSERT INTO emotes (name, url) VALUES (?, ?);''', (n, u))
+                conn.commit()
+            except Error as e:
                 print(e)
+        cursor = conn.execute('''SELECT * FROM emotes''')
         if conn:
             conn.close()
 
     def emote_db(self):
         """Performs the above methods to add the webpage to the database"""
         names, urls = self._emote_fetch()
-        self._sql_store(names, urls)
+        self._sql_store(self, names, urls)
 
 
 def test_function(url="https://www.frankerfacez.com/emoticons/?q=&sort=count-desc"):
-    page_1 = Web_Page(url)
+    page_1 = WebPage(url)
     return page_1.emote_dict()
 
 
 def create_db(db_name="database.sqlite"):
     url_base = "https://www.frankerfacez.com/emoticons/?q=&sort=count-desc&page="
-    for x in range(1,10):
+    for x in range(20, 30):
         print(x)
-        Web_Page(url_base + str(x), db_name).emote_db()
+        WebPage(url_base + str(x), db_name).emote_db()
 
 
 def db_string(orig, x="url", y="name", db_name="database.sqlite"):
@@ -130,4 +129,3 @@ def db_string(orig, x="url", y="name", db_name="database.sqlite"):
 
 if __name__ == '__main__':
     create_db()
-
