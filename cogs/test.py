@@ -3,6 +3,7 @@ from discord.ext import commands
 import sys
 # sys.path.insert(1, '../.')
 from emote_fetch import test_function
+from emote_fetch import db_string
 
 
 class Test(commands.Cog):
@@ -21,6 +22,14 @@ class Test(commands.Cog):
         except KeyError:
             await ctx.send('No emote? SoBayed')
 
+    @commands.command()
+    async def emote_db(self, ctx, name):
+        try:
+            await ctx.send(db_string(name))
+        except KeyError:
+            await ctx.send('No emote? SoBayed')
+
 
 def setup(client):
     client.add_cog(Test(client))
+

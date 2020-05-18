@@ -9,20 +9,19 @@ from pprint import pprint as pp
 import sqlite3
 from sqlite3 import Error
 
-db_filename = "database.sqlite"
-
 
 class Web_Page:
     """Respective to the emoticon library pages"""
 
-    def __init__(self, url):
+    def __init__(self, url, db_filename="database.sqlite"):
         self._url = url
+        self._db_filename = db_filename
 
     def _html_fetch(self):
         """Obtains the html of the page in question and formats it adequately.
 
-        Returns:
-            A soup object containing the html code of the page
+            Returns:
+                A soup object containing the html code of the page
         """
         page = requests.get(self._url)
         return BeautifulSoup(page.content, features="html.parser")
@@ -31,9 +30,9 @@ class Web_Page:
         """Processes the obtained soup and extracts the relevant information.
            Depending on availability, the emote images will be 4x their size.
 
-        Returns:
-            A tuple with 2 lists containing the emote names and image urls
-            respectively.
+            Returns:
+                A tuple with 2 lists containing the emote names and image urls
+                respectively.
         """
         names = []
         img_urls = []
@@ -51,31 +50,40 @@ class Web_Page:
         return names, img_urls
 
     def emote_dict(self):
-        """Returns dictionary respective to emote_list"""
+        """Returns dictionary respective to _emote_fetch"""
         keys, values = self.emote_fetch()
         return dict(zip(keys, values))
 
     def _sql_store(self, names, urls):
-        """Stores the list of emotes in SQLite database."""
+        """Stores the list of emotes in SQLite database.
+
+            Args:
+                names: List of strings with names corresponding to the images
+                urls: List of strings with urls corresponding to the images
+        """
         conn = None
-        if not (os.path.isfile(db_filename)):
+        if not (os.path.isfile(self._db_filename)):
             conn = sqlite3.connect("database.sqlite")
             conn.execute('''CREATE TABLE emotes(
-                        ID PRIMARY KEY NOT NULL,
                         name TEXT NOT NULL,
                         url TEXT NOT NULL)''')
             conn.close()
         try:
             conn = sqlite3.connect("database.sqlite")
-            conn.execute('''INSERT INTO emotes(name, url) VALUES (?, ?)''', (names, urls))
         except Error as e:
             print(e)
-        finally:
-            if conn:
-                conn.close()
+        for n, u in zip(names, urls):
+            try:
+                conn.execute('''INSERT INTO emotes (name, url) VALUES (?, ?)''', (n, u))
+            except sqlite3.IntegrityError as e:
+                print(e)
+        if conn:
+            conn.close()
 
-    def emote_db(self)
-
+    def emote_db(self):
+        """Performs the above methods to add the webpage to the database"""
+        names, urls = self._emote_fetch()
+        self._sql_store(names, urls)
 
 
 def test_function(url="https://www.frankerfacez.com/emoticons/?q=&sort=count-desc"):
@@ -84,8 +92,37 @@ def test_function(url="https://www.frankerfacez.com/emoticons/?q=&sort=count-des
 
 
 def create_db(db_name="database.sqlite"):
-    url_base = "https://www.frankerfacez.com/emoticons/?q=&sort=count-desc&page=")
+    url_base = "https://www.frankerfacez.com/emoticons/?q=&sort=count-desc&page="
+    for x in range(1,10):
+        print(x)
+        Web_Page(url_base + str(x), db_name).emote_db()
+
+
+def db_string(orig, x="url", y="name", db_name="database.sqlite"):
+    """Searches a database for an item and returns it in a usable form.
+
+        Args:
+            orig = item corresponding to the one to find in the database.
+            x = name of the type of item to retrieve.
+            y = name of the type of item orig is.
+            db_name = Name of the database.
+
+        Raises:
+            KeyError - If item could not be obtained.
+    """
+    try:
+        conn = sqlite3.connect("database.sqlite")
+    except Error as e:
+        print(e)
+    a = conn.execute("SELECT url FROM emotes WHERE name=?", (orig,)).fetchall()
+    if conn:
+        conn.close()
+    print(a)
+    if not a:
+        raise KeyError
+    return a[0][0]
 
 
 if __name__ == '__main__':
-    test_function()
+    create_db()
+
